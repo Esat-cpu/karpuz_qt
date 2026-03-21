@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+class Karpuz;
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class Dialog;
@@ -21,16 +23,19 @@ private:
     Ui::Dialog *ui;
 
     QTimer *timer;
+    QTimer *oyunTimer;
     int sure;
 
     int max_skor;
     int kes_karpuz;
     int kac_karpuz;
+    QList<Karpuz*> karpuzlar;
 
     void sureBitti();
     void skorOku();
     void skorYaz();
-    void karpuzOlustur();
+    void karpuzOlustur(int, int);
+    void animasyon();
 
 
 private slots:

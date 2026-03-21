@@ -31,11 +31,19 @@ Dialog::Dialog(QWidget *parent)
     kac_karpuz = 0;
 
 
-    // Timer
+    // Oyun süresi için Timer
     sure = 30;
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Dialog::zamanGuncelle);
     timer->start(1000);
+
+    // Sürekli hareket için Timer
+    oyunTimer = new QTimer(this);
+    connect(oyunTimer, &QTimer::timeout, this, &Dialog::animasyon);
+    oyunTimer->start(16);
+
+    // DEBUG
+    karpuzOlustur(100, 100);
 }
 
 Dialog::~Dialog()
@@ -53,6 +61,7 @@ void Dialog::zamanGuncelle() {
     // Süre bittiğinde
     if (sure == 0) {
         timer->stop();
+        oyunTimer->stop();
         sureBitti();
     }
 }
@@ -128,9 +137,32 @@ void Dialog::skorYaz() {
 void Dialog::karpuzOlustur(int x, int y) {
     Karpuz* k = new Karpuz(this);
 
-    connect(k, &Karpuz::kesildi, this, [=](){ kes_karpuz++; });
+    connect(k, &Karpuz::kesildi, ui->site, [=](){
+        karpuzlar.removeOne(k);
+        ui->kesilen_label->setText(QString::number(++kes_karpuz));
+    });
 
     k->move(x, y);
     k->show();
+
+    karpuzlar.append(k);
+}
+
+
+// Karpuz hareketi ve ekran dışına çıkma kontrolü
+void Dialog::animasyon() {
+    QList<Karpuz*> silinecekler;
+
+    for (Karpuz* k : karpuzlar) {
+        k->move(k->x(), k->y() + 3);
+
+        if (k->y() > ui->site->height()+100) silinecekler.append(k);
+    }
+
+    for (Karpuz* k : silinecekler) {
+        karpuzlar.removeOne(k);
+        k->deleteLater();
+        ui->kacirilan_label->setText(QString::number(++kac_karpuz));
+    }
 }
 
