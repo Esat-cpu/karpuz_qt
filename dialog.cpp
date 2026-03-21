@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QFile>
+#include <QRandomGenerator>
 
 #include "karpuz.h"
 
@@ -25,6 +26,8 @@ Dialog::Dialog(QWidget *parent)
 
     // Skorlar dosyasını oku
     skorOku();
+    // Konumlar dosyasını oku
+    konumOku();
 
     // skor
     kes_karpuz = 0;
@@ -42,8 +45,14 @@ Dialog::Dialog(QWidget *parent)
     connect(oyunTimer, &QTimer::timeout, this, &Dialog::animasyon);
     oyunTimer->start(16);
 
-    // DEBUG
-    karpuzOlustur(100, 100);
+    // Karpuz oluşumu için Timer
+    spawnTimer = new QTimer(this);
+    connect(spawnTimer, &QTimer::timeout, this, [=](){
+        int index = QRandomGenerator::global()->bounded(konumlar.size());
+        std::pair xy = konumlar[index];
+        karpuzOlustur(xy.first, xy.second);
+    });
+    spawnTimer->start(400);
 }
 
 Dialog::~Dialog()
@@ -62,6 +71,7 @@ void Dialog::zamanGuncelle() {
     if (sure == 0) {
         timer->stop();
         oyunTimer->stop();
+        spawnTimer->stop();
         sureBitti();
     }
 }
@@ -94,7 +104,6 @@ void Dialog::sureBitti() {
 
 // Skorlar dosyası okunur ve max_skor alınır
 void Dialog::skorOku() {
-    QString satir;
     QFile skorlar(SKORLAR);
 
     if (!skorlar.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -106,7 +115,7 @@ void Dialog::skorOku() {
     }
 
     QTextStream stream(&skorlar);
-    satir = stream.readLine();
+    QString satir = stream.readLine();
     max_skor = satir.toInt();
 
     while (!stream.atEnd()) {
@@ -163,6 +172,29 @@ void Dialog::animasyon() {
         karpuzlar.removeOne(k);
         k->deleteLater();
         ui->kacirilan_label->setText(QString::number(++kac_karpuz));
+    }
+}
+
+
+// Konumlar dosyası okunur ve koordinat çiftleri listeye kaydedilir
+void Dialog::konumOku() {
+    QFile konumDosya(KONUMLAR);
+
+    if (!konumDosya.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QString hataMesaji = "Konumlar dosyasını okumada hata:\n";
+        hataMesaji.append(konumDosya.errorString());
+        QMessageBox::critical(this, "Hata!", hataMesaji);
+        std::exit(1);
+        return;
+    }
+
+    QTextStream stream(&konumDosya);
+    QString satir;
+
+    while (!stream.atEnd()) {
+        satir = stream.readLine();
+        QStringList xy = satir.split(" ");
+        konumlar.append(qMakePair(xy[0].toInt(), xy[1].toInt()));
     }
 }
 

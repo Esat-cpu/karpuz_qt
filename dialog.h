@@ -24,16 +24,19 @@ private:
 
     QTimer *timer;
     QTimer *oyunTimer;
+    QTimer *spawnTimer;
     int sure;
 
     int max_skor;
     int kes_karpuz;
     int kac_karpuz;
     QList<Karpuz*> karpuzlar;
+    QList<QPair<int, int>> konumlar;
 
     void sureBitti();
     void skorOku();
     void skorYaz();
+    void konumOku();
     void karpuzOlustur(int, int);
     void animasyon();
 

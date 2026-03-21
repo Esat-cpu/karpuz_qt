@@ -38,7 +38,7 @@ public:
     {
         if (Dialog->objectName().isEmpty())
             Dialog->setObjectName("Dialog");
-        Dialog->resize(1224, 735);
+        Dialog->resize(1897, 735);
         verticalLayout_2 = new QVBoxLayout(Dialog);
         verticalLayout_2->setSpacing(0);
         verticalLayout_2->setObjectName("verticalLayout_2");
@@ -141,7 +141,7 @@ public:
         sure_label->setFont(font);
         gridLayoutWidget = new QWidget(top_bar);
         gridLayoutWidget->setObjectName("gridLayoutWidget");
-        gridLayoutWidget->setGeometry(QRect(860, 20, 345, 80));
+        gridLayoutWidget->setGeometry(QRect(1540, 20, 345, 80));
         gridLayout = new QGridLayout(gridLayoutWidget);
         gridLayout->setObjectName("gridLayout");
         gridLayout->setContentsMargins(0, 0, 0, 0);
