@@ -9,8 +9,8 @@
 #include "karpuz.h"
 
 
-static const QString SKORLAR = "dosya/skorlar.txt";
-static const QString KONUMLAR = "dosya/konumlar.txt";
+static const QString SKORLAR = "../../dosya/skorlar.txt";
+static const QString KONUMLAR = "../../dosya/konumlar.txt";
 
 
 Dialog::Dialog(QWidget *parent)
@@ -18,6 +18,8 @@ Dialog::Dialog(QWidget *parent)
     , ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+
+    system("pwd");
 
     // Top barın rengi
     ui->top_bar->setStyleSheet("background-color: lightgray;");
